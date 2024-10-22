@@ -8,7 +8,9 @@ import thermalCamera4 from "../assets/thermal/Camera 4.jpg";
 import nightCamera1 from "../assets/night/Camera 1.jpg";
 import nightCamera2 from "../assets/night/Camera 2.jpg";
 import nightCamera3 from "../assets/night/Camera 3.jpg";
-import normalCamera1 from "../assets/normal/Camera 1.jpg";
+import normalCamera1 from "../assets/normal/Camera 2.jpg";
+import normalCamera2 from "../assets/normal/Camera 1.jpg";
+import normalCamera3 from "../assets/normal/Camera 3.jpg";
 
 export const GlobalContext = createContext(null);
 
@@ -30,13 +32,13 @@ export default function GlobalState({ children }) {
     },
     {
       id: 2,
-      normalImage: "",
+      normalImage: normalCamera2,
       thermalImage: thermalCamera2,
       nightImage: nightCamera2,
     },
     {
       id: 3,
-      normalImage: "",
+      normalImage: normalCamera3,
       thermalImage: thermalCamera3,
       nightImage: nightCamera3,
     },

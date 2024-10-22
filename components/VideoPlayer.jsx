@@ -3,8 +3,8 @@
 import Image from "next/image";
 import React, { useState } from "react";
 
-const VideoPlayer = ({ currentCameraData }) => {
-  const [CameraView, setCameraView] = useState("Normal");
+const VideoPlayer = ({ currentCameraData, setCurrentCameraData }) => {
+  const [CameraView, setCameraView] = useState("Thermal");
   const [MultiScreenView, setMultiScreenView] = useState(false);
   return (
     <div className="p-5 bg-[#1d2440] min-h-full">

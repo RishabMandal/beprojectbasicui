@@ -2,7 +2,7 @@
 
 import React, { useContext, useRef } from "react";
 import { GlobalContext } from "@/context";
-import { redirect, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 const page = () => {
   const { users, setUsers, setIsAuthUser } = useContext(GlobalContext);

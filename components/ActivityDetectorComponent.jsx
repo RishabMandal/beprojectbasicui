@@ -1,8 +1,10 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import React from "react";
 
 const ActivityDetectorComponent = () => {
+  const router = useRouter();
   return (
     <div className="bg-[#25314f] h-full pt-5 flex flex-col justify-between">
       <div>
@@ -140,7 +142,10 @@ const ActivityDetectorComponent = () => {
           </svg>
           <div className="text-center text-sm pt-1">Call authority</div>
         </div>
-        <div className="border border-[#334c8e] bg-[#2c4075] p-3 hover:scale-110 duration-200">
+        <div
+          className="border border-[#334c8e] bg-[#2c4075] p-3 hover:scale-110 duration-200"
+          onClick={() => router.push("/components/GenerateReport")}
+        >
           <svg
             xmlns="http://www.w3.org/2000/svg"
             fill="none"

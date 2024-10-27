@@ -11,7 +11,8 @@ import { Modal } from "@mui/material";
 // import thermalCamera1 from "../../../assets/thermal/Camera 1.jpg";
 
 const page = () => {
-  const { data, setCurrentCameraData } = useContext(GlobalContext);
+  const { data, setCurrentCameraData, alertCameraData, setAlertCameraData } =
+    useContext(GlobalContext);
   const router = useRouter();
   const [CameraView, setCameraView] = useState("Thermal");
 
@@ -83,9 +84,6 @@ const page = () => {
   //         console.error("Error:", error.message);
   //       });
   //   }, []);
-  // useEffect(() => {
-  //   alert(CameraView);
-  // }, [CameraView]);
 
   const style = {
     position: "absolute",
@@ -103,6 +101,10 @@ const page = () => {
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
+  useEffect(() => {
+    if (alertCameraData) handleOpen();
+  }, [alertCameraData]);
+
   return (
     <div className="bg-[#1d2440] min-h-screen text-white">
       <Modal
@@ -110,6 +112,7 @@ const page = () => {
         onClose={handleClose}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
+        className="outline-none"
       >
         <div className="w-[50vw] h-[50vh] top-5 mx-auto bg-opacity-10 flex flex-col items-center justify-center">
           <div className="">
@@ -131,13 +134,14 @@ const page = () => {
           <div className="font-semibold text-2xl">
             Suspicious Activity Detected!
           </div>
+          <div>Suspicious activity was detected in Zone 1, Block A</div>
           <div className="flex flex-row mt-5 gap-5">
             <button
               onClick={() => {
                 setCurrentCameraData(data[0]);
                 router.push("/components/DetailedVideoSection");
               }}
-              className="bg-blue-500 px-3 py-2 rounded-lg hover:bg-blue-600 duration-200"
+              className={`cursor-pointer bg-[#2b4075] border border-[#48599a] p-1 px-3 hover:scale-105 duration-200 rounded-lg`}
             >
               View Camera
             </button>
@@ -205,106 +209,44 @@ const page = () => {
                 </div>
               );
             })}
-            {/* <div
-              className="cursor-pointer"
-              onClick={() => {
-                setCurrentCameraData(data[0]);
-                router.push("/components/DetailedVideoSection");
-              }}
-            >
-              <div className="flex flex-row gap-5 pb-2">
-                <Image
-                  src={data[0].thermalImage}
-                  alt="Cam"
-                  className="w-[40%] rounded-lg"
-                />
-                <div className="flex-1">
-                  <div className="font-bold text-xl">Zone 1</div>
-                  <div className="font-semibold">Block A</div>
-                  <div className="text-gray-400">
-                    Thermal Camera <br />
-                    Time <br />
-                    Location
-                  </div>
-                </div>
-              </div>
-              <hr />
-            </div> */}
           </div>
         </div>
-        <div className="flex-1">
-          <div className="flex flex-row flex-1 p-5 gap-5">
-            <div className="flex-1 w-full h-[54vh] bg-black rounded-lg">
+        <div className="flex-1 grid grid-cols-2 m-5 gap-5">
+          {data.slice(0, 3).map((item, index) => (
+            <div className="relative">
               <Image
                 src={
                   CameraView === "Thermal"
-                    ? data[0].thermalImage
+                    ? item.thermalImage
                     : CameraView === "Normal"
-                    ? data[0].normalImage
+                    ? item.normalImage
                     : CameraView === "Night"
-                    ? data[0].nightImage
-                    : null // or a placeholder image if needed
+                    ? item.nightImage
+                    : null 
                 }
                 alt="Camera Img"
                 onClick={() => {
-                  setCurrentCameraData(data[0]);
+                  setCurrentCameraData(item);
                   router.push("/components/DetailedVideoSection");
                 }}
-                className="w-full h-full border-2 border-[#334c8e] bg-black duration-200 rounded-lg object-contain cursor-pointer hover:scale-105"
+                className="relative w-full h-full border-2 border-[#334c8e] bg-black duration-200 rounded-lg object-contain cursor-pointer hover:scale-105"
               />
+              <div className="absolute z-30 top-2 left-2 bg-[#2b4075] text-white text-sm p-1 rounded">
+                Camera ID: {item.id} 
+              </div>
             </div>
-            <div className="flex-1 w-full h-[54vh] bg-black rounded-lg">
-              <Image
-                src={
-                  CameraView === "Thermal"
-                    ? data[1]?.thermalImage
-                    : CameraView === "Normal"
-                    ? data[1]?.normalImage
-                    : CameraView === "Night"
-                    ? data[1]?.nightImage
-                    : null // or a placeholder image if needed
-                }
-                alt="Camera Img"
-                onClick={() => {
-                  setCurrentCameraData(data[1]);
-                  router.push("/components/DetailedVideoSection");
-                }}
-                className="w-full h-full border-2 border-[#334c8e] bg-black duration-200 rounded-lg object-contain cursor-pointer hover:scale-105"
-              />
-            </div>
-          </div>
-          <div className="flex flex-row flex-1 px-5 pb-5 gap-5">
-            <div className="flex-1 w-full h-[54vh] bg-black rounded-lg">
-              <Image
-                src={
-                  CameraView === "Thermal"
-                    ? data[2]?.thermalImage
-                    : CameraView === "Normal"
-                    ? data[2]?.normalImage
-                    : CameraView === "Night"
-                    ? data[2]?.nightImage
-                    : null // or a placeholder image if needed
-                }
-                alt="Camera Img"
-                onClick={() => {
-                  setCurrentCameraData(data[2]);
-                  router.push("/components/DetailedVideoSection");
-                }}
-                className="w-full h-full border-2 border-[#334c8e] bg-black duration-200 rounded-lg object-contain cursor-pointer hover:scale-105"
-              />
-            </div>
-            <div className="flex-1 w-full h-[54vh] flex justify-center items-center bg-black rounded-lg">
-              {/* <Image
+          ))}
+          <div className="flex-1 w-full h-auto flex justify-center items-center bg-black rounded-lg">
+            {/* <Image
                 src={data[0].thermalImage}
                 alt="Camera Img"
                 className="w-full h-full rounded-lg object-contain cursor-pointer"
               /> */}
-              <div
-                onClick={handleOpen}
-                className="text-center text-7xl cursor-pointer hover:scale-125 duration-200"
-              >
-                +
-              </div>
+            <div
+              onClick={() => setAlertCameraData(data[0])}
+              className="text-center text-7xl cursor-pointer hover:scale-125 duration-200"
+            >
+              +
             </div>
           </div>
         </div>

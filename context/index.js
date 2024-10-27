@@ -45,6 +45,7 @@ export default function GlobalState({ children }) {
     { id: 4, normalImage: "", thermalImage: thermalCamera4, nightImage: "" },
   ]);
   const [currentCameraData, setCurrentCameraData] = useState({});
+  const [alertCameraData, setAlertCameraData] = useState();
   return (
     <GlobalContext.Provider
       value={{
@@ -60,6 +61,8 @@ export default function GlobalState({ children }) {
         setData,
         currentCameraData,
         setCurrentCameraData,
+        alertCameraData,
+        setAlertCameraData,
       }}
     >
       {children}

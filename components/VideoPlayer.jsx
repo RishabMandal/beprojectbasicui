@@ -1,19 +1,40 @@
 "use client";
 
+import { GlobalContext } from "@/context";
 import Image from "next/image";
-import React, { useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 
 const VideoPlayer = ({ currentCameraData, setCurrentCameraData }) => {
   const [CameraView, setCameraView] = useState("Thermal");
   const [MultiScreenView, setMultiScreenView] = useState(false);
+  const { data } = useContext(GlobalContext);
+
+  const handleCameraChange = (event) => {
+    const selectedCameraId = parseInt(event.target.value);
+    const selectedCamera = data?.find(
+      (camera) => camera.id === selectedCameraId
+    );
+    // console.log(selectedCamera, selectedCameraId);
+    setCurrentCameraData(selectedCamera);
+  };
+
+  // useEffect(() => {
+  //   console.log(currentCameraData);
+  // }, [currentCameraData]);
+
   return (
     <div className="p-5 bg-[#1d2440] min-h-full">
       <div className="flex flex-row justify-between items-center gap-2">
-        <select className="flex-1 p-2 bg-[#2b4075] focus:outline-none rounded-lg cursor-pointer">
-          {/* Camera {currentCameraData?.id} */}
-          <option value="saab">Camera {currentCameraData?.id}</option>
-          <option value="volvo">Camera 2</option>
-          <option value="volvo">Camera 3</option>
+        <select
+          className="flex-1 p-2 bg-[#2b4075] focus:outline-none rounded-lg cursor-pointer"
+          value={currentCameraData?.id}
+          onChange={handleCameraChange}
+        >
+          {data?.map((camera) => (
+            <option key={camera.id} value={camera.id}>
+              Camera {camera.id}
+            </option>
+          ))}
         </select>
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -39,36 +60,36 @@ const VideoPlayer = ({ currentCameraData, setCurrentCameraData }) => {
         ></iframe> */}
         {!MultiScreenView && CameraView === "Normal" && (
           <Image
-            src={currentCameraData.normalImage}
+            src={currentCameraData?.normalImage}
             alt="Camera Feed Not Available"
             className="w-full h-[75vh] border-2 border-[#334c8e] bg-black rounded-lg object-contain my-5"
           />
         )}
         {!MultiScreenView && CameraView === "Thermal" && (
           <Image
-            src={currentCameraData.thermalImage}
+            src={currentCameraData?.thermalImage}
             alt="Camera Feed Not Available"
             className="w-full h-[75vh] border-2 border-[#334c8e] bg-black rounded-lg object-contain my-5"
           />
         )}
         {!MultiScreenView && CameraView === "Night" && (
           <Image
-            src={currentCameraData.nightImage}
+            src={currentCameraData?.nightImage}
             alt="Camera Feed Not Available"
             className="w-full h-[75vh] border-2 border-[#334c8e] bg-black rounded-lg object-contain my-5"
           />
         )}
         {MultiScreenView && (
-          <div className="flex flex-row">
+          <div className="flex flex-row max-w-[75vw]">
             <Image
-              src={currentCameraData.thermalImage}
+              src={currentCameraData?.thermalImage}
               alt="Camera Feed Not Available"
-              className="w-full h-[75vh] border-2 border-[#334c8e] bg-black rounded-lg object-contain my-5"
+              className="flex-1 h-[70vh] border-2 border-[#334c8e] bg-black rounded-lg object-contain my-5"
             />
             <Image
-              src={currentCameraData.nightImage}
+              src={currentCameraData?.nightImage}
               alt="Camera Feed Not Available"
-              className="w-full h-[75vh] border-2 border-[#334c8e] bg-black rounded-lg object-contain my-5"
+              className="flex-1 h-[70vh] border-2 border-[#334c8e] bg-black rounded-lg object-contain my-5"
             />
           </div>
         )}
@@ -80,7 +101,8 @@ const VideoPlayer = ({ currentCameraData, setCurrentCameraData }) => {
           viewBox="0 0 24 24"
           stroke-width="2.5"
           stroke="currentColor"
-          className="size-9 h-full cursor-pointer bg-[#2b4075] border border-[#48599a] p-1"
+          className="size-9 h-full cursor-pointer bg-[#2b4075] border border-[#48599a] p-1 rounded-lg hover:scale-110 duration-200"
+          onClick={() => setCurrentCameraData(data[currentCameraData.id - 2])}
         >
           <path
             stroke-linecap="round"
@@ -94,7 +116,8 @@ const VideoPlayer = ({ currentCameraData, setCurrentCameraData }) => {
           viewBox="0 0 24 24"
           stroke-width="2.5"
           stroke="currentColor"
-          className="size-9 h-full -ml-1 cursor-pointer bg-[#2b4075] border border-[#48599a] p-1"
+          className="size-9 h-full -ml-1 cursor-pointer bg-[#2b4075] border border-[#48599a] p-1 rounded-lg hover:scale-110 duration-200"
+          onClick={() => setCurrentCameraData(data[currentCameraData.id])}
         >
           <path
             stroke-linecap="round"
@@ -106,7 +129,7 @@ const VideoPlayer = ({ currentCameraData, setCurrentCameraData }) => {
         <div
           className={`cursor-pointer ${
             CameraView === "Normal" && "bg-[#2b4075]"
-          } border border-[#48599a] p-1 ml-3 hover:scale-105 duration-200`}
+          } border border-[#48599a] p-1 ml-3 hover:scale-105 duration-200 px-3 rounded-lg`}
           onClick={() => setCameraView("Normal")}
         >
           Normal Vision
@@ -114,7 +137,7 @@ const VideoPlayer = ({ currentCameraData, setCurrentCameraData }) => {
         <div
           className={`cursor-pointer ${
             CameraView === "Thermal" && "bg-[#2b4075]"
-          } border border-[#48599a] p-1 hover:scale-105 duration-200`}
+          } border border-[#48599a] p-1 hover:scale-105 duration-200 px-3 rounded-lg`}
           onClick={() => setCameraView("Thermal")}
         >
           Thermal Vision
@@ -122,7 +145,7 @@ const VideoPlayer = ({ currentCameraData, setCurrentCameraData }) => {
         <div
           className={`cursor-pointer ${
             CameraView === "Night" && "bg-[#2b4075]"
-          } border border-[#48599a] p-1 hover:scale-105 duration-200`}
+          } border border-[#48599a] p-1 hover:scale-105 duration-200 px-3 rounded-lg`}
           onClick={() => setCameraView("Night")}
         >
           Night Vision

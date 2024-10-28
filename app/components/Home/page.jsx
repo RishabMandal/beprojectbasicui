@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { GlobalContext } from "@/context";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -85,6 +85,7 @@ const page = () => {
   //       });
   //   }, []);
 
+  // Modal
   const style = {
     position: "absolute",
     top: "50%",
@@ -101,12 +102,39 @@ const page = () => {
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
+  // Resizable div
+  const leftDivRef = useRef(null);
+  const rightDivRef = useRef(null);
+  const dividerRef = useRef(null);
+
+  const handleMouseDown = (e) => {
+    const startX = e.clientX;
+    const initialLeftWidth = leftDivRef.current.offsetWidth;
+
+    const onMouseMove = (e) => {
+      const newWidth = initialLeftWidth + (e.clientX - startX);
+      leftDivRef.current.style.width = `${newWidth}px`;
+      const newRightWidth = `calc(100% - ${
+        newWidth + dividerRef.current.offsetWidth
+      }px)`;
+      rightDivRef.current.style.width = newRightWidth;
+    };
+
+    const onMouseUp = () => {
+      document.removeEventListener("mousemove", onMouseMove);
+      document.removeEventListener("mouseup", onMouseUp);
+    };
+
+    document.addEventListener("mousemove", onMouseMove);
+    document.addEventListener("mouseup", onMouseUp);
+  };
+
   useEffect(() => {
     if (alertCameraData) handleOpen();
   }, [alertCameraData]);
 
   return (
-    <div className="bg-[#1d2440] min-h-screen text-white">
+    <div className="bg-[#1d2440] min-h-screen h-full text-white">
       <Modal
         open={open}
         onClose={handleClose}
@@ -151,69 +179,85 @@ const page = () => {
           </div>
         </div>
       </Modal>
-      <div className="flex flex-row">
-        <div className="w-[30vw] bg-[#25314f] p-2">
-          {/* <input type="file" accept="image/*" onChange={handleFileChange} /> */}
-          <select
-            className="flex-1 p-2 bg-[#2b4075] rounded-lg w-full focus:outline-none cursor-pointer"
-            onChange={(e) => setCameraView(e.target.value)}
-          >
-            <option value="Thermal">Camera View: Thermal Vision</option>
-            <option value="Normal">Camera View: Normal Vision</option>
-            <option value="Night">Camera View: Night Vision</option>
-          </select>
-          <div className="px-2 bg-[#2b4075] rounded-lg w-full min-h-[100vh] mt-2">
-            {data?.map((cam, index) => {
-              return (
-                <div
-                  key={index}
-                  className="cursor-pointer pt-2"
-                  onClick={() => {
-                    setCurrentCameraData(cam);
-                    router.push("/components/DetailedVideoSection");
-                  }}
-                >
-                  <div className="flex flex-row gap-5 pb-2">
-                    {CameraView === "Thermal" && (
-                      <Image
-                        src={cam.thermalImage}
-                        alt="Cam"
-                        className="w-[40%] rounded-lg"
-                      />
-                    )}
-                    {CameraView === "Normal" && (
-                      <Image
-                        src={cam.normalImage}
-                        alt="Cam"
-                        className="w-[40%] rounded-lg"
-                      />
-                    )}
-                    {CameraView === "Night" && (
-                      <Image
-                        src={cam.nightImage}
-                        alt="Cam"
-                        className="w-[40%] rounded-lg"
-                      />
-                    )}
-                    <div className="flex-1">
-                      <div className="font-bold text-xl">Zone {index + 1}</div>
-                      <div className="font-semibold">Block A</div>
-                      <div className="text-gray-400">
-                        Thermal Camera <br />
-                        Time <br />
-                        Location
+      <div className="flex h-[150vh]">
+        <div
+          ref={leftDivRef}
+          style={{ minWidth: "100px", width: "33.33%" }} // Prevents the div from being too small
+          className="bg-[#25314f]"
+        >
+          <div className="flex-1 bg-[#25314f] p-2 overflow-x-auto resize-x">
+            {/* <input type="file" accept="image/*" onChange={handleFileChange} /> */}
+            <select
+              className="flex-1 p-2 bg-[#2b4075] rounded-lg w-full focus:outline-none cursor-pointer"
+              onChange={(e) => setCameraView(e.target.value)}
+            >
+              <option value="Thermal">Camera View: Thermal Vision</option>
+              <option value="Normal">Camera View: Normal Vision</option>
+              <option value="Night">Camera View: Night Vision</option>
+            </select>
+            <div className="px-2 bg-[#2b4075] rounded-lg w-full min-h-[100vh] mt-2">
+              {data?.map((cam, index) => {
+                return (
+                  <div
+                    key={index}
+                    className="cursor-pointer pt-2"
+                    onClick={() => {
+                      setCurrentCameraData(cam);
+                      router.push("/components/DetailedVideoSection");
+                    }}
+                  >
+                    <div className="flex flex-row gap-5 pb-2">
+                      {CameraView === "Thermal" && (
+                        <Image
+                          src={cam.thermalImage}
+                          alt="Cam"
+                          className="w-[40%] rounded-lg"
+                        />
+                      )}
+                      {CameraView === "Normal" && (
+                        <Image
+                          src={cam.normalImage}
+                          alt="Cam"
+                          className="w-[40%] rounded-lg"
+                        />
+                      )}
+                      {CameraView === "Night" && (
+                        <Image
+                          src={cam.nightImage}
+                          alt="Cam"
+                          className="w-[40%] rounded-lg"
+                        />
+                      )}
+                      <div className="flex-1">
+                        <div className="font-bold text-xl">
+                          Zone {index + 1}
+                        </div>
+                        <div className="font-semibold">Block A</div>
+                        <div className="text-gray-400">
+                          Thermal Camera <br />
+                          Time <br />
+                          Location
+                        </div>
                       </div>
                     </div>
+                    <hr />
                   </div>
-                  <hr />
-                </div>
-              );
-            })}
+                );
+              })}
+            </div>
           </div>
         </div>
-        <div className="flex-1 grid grid-cols-2 m-5 gap-5">
+        <div
+          ref={dividerRef}
+          className="bg-[#334c8e] cursor-col-resize w-1 h-full"
+          onMouseDown={handleMouseDown}
+        ></div>
+        <div
+          ref={rightDivRef}
+          className={`flex-1 flex flex-wrap justify-start items-start p-5 gap-5 h-fit`}
+        >
           {data.slice(0, 3).map((item, index) => (
-            <div className="relative">
+            <div key={index} className="relative min-w-[20vw] flex-1 h-fit">
               <Image
                 src={
                   CameraView === "Thermal"
@@ -222,26 +266,21 @@ const page = () => {
                     ? item.normalImage
                     : CameraView === "Night"
                     ? item.nightImage
-                    : null 
+                    : null
                 }
                 alt="Camera Img"
                 onClick={() => {
                   setCurrentCameraData(item);
                   router.push("/components/DetailedVideoSection");
                 }}
-                className="relative w-full h-full border-2 border-[#334c8e] bg-black duration-200 rounded-lg object-contain cursor-pointer hover:scale-105"
+                className="relative w-full h-auto border-2 border-[#334c8e] bg-black duration-200 rounded-lg object-contain cursor-pointer hover:scale-105"
               />
               <div className="absolute z-30 top-2 left-2 bg-[#2b4075] text-white text-sm p-1 rounded">
-                Camera ID: {item.id} 
+                Camera ID: {item.id}
               </div>
             </div>
           ))}
-          <div className="flex-1 w-full h-auto flex justify-center items-center bg-black rounded-lg">
-            {/* <Image
-                src={data[0].thermalImage}
-                alt="Camera Img"
-                className="w-full h-full rounded-lg object-contain cursor-pointer"
-              /> */}
+          <div className="h-auto flex-1 min-w-[20vw] flex justify-center items-center bg-black rounded-lg">
             <div
               onClick={() => setAlertCameraData(data[0])}
               className="text-center text-7xl cursor-pointer hover:scale-125 duration-200"
@@ -251,6 +290,8 @@ const page = () => {
           </div>
         </div>
       </div>
+      {/* <div className="flex flex-row">
+      </div> */}
     </div>
   );
 };

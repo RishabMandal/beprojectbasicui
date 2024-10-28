@@ -16,94 +16,42 @@ const page = () => {
 
   return (
     <div className="bg-[#1d2440]">
-      <div className="flex-1">
-        <div className="flex flex-row flex-1 p-5 gap-5">
-          <div className="flex-1 w-full h-[54vh] bg-black rounded-lg">
-            <Image
-              src={
-                CameraView === "Thermal"
-                  ? data[0].thermalImage
-                  : CameraView === "Normal"
-                  ? data[0].normalImage
-                  : CameraView === "Night"
-                  ? data[0].nightImage
-                  : null // or a placeholder image if needed
-              }
-              alt="Camera Img"
-              onClick={() => {
-                setCurrentCameraData(data[0]);
-                router.push("/components/DetailedVideoSection");
-              }}
-              className={`w-full h-full ${
-                alertCameraData?.id == 1
-                  ? "border-4 border-red-600"
-                  : "border-2 border-[#334c8e]"
-              } bg-black duration-200 rounded-lg object-contain cursor-pointer hover:scale-105`}
-            />
-          </div>
-          <div className="flex-1 w-full h-[54vh] bg-black rounded-lg">
-            <Image
-              src={
-                CameraView === "Thermal"
-                  ? data[1]?.thermalImage
-                  : CameraView === "Normal"
-                  ? data[1]?.normalImage
-                  : CameraView === "Night"
-                  ? data[1]?.nightImage
-                  : null // or a placeholder image if needed
-              }
-              alt="Camera Img"
-              onClick={() => {
-                setCurrentCameraData(data[1]);
-                router.push("/components/DetailedVideoSection");
-              }}
-              className={`w-full h-full ${
-                alertCameraData?.id == 2
-                  ? "border-4 border-red-600"
-                  : "border-2 border-[#334c8e]"
-              } bg-black duration-200 rounded-lg object-contain cursor-pointer hover:scale-105`}
-            />
-          </div>
-        </div>
-        <div className="flex flex-row flex-1 px-5 pb-5 gap-5">
-          <div className="flex-1 w-full h-[54vh] bg-black rounded-lg">
-            <Image
-              src={
-                CameraView === "Thermal"
-                  ? data[2]?.thermalImage
-                  : CameraView === "Normal"
-                  ? data[2]?.normalImage
-                  : CameraView === "Night"
-                  ? data[2]?.nightImage
-                  : null // or a placeholder image if needed
-              }
-              alt="Camera Img"
-              onClick={() => {
-                setCurrentCameraData(data[2]);
-                router.push("/components/DetailedVideoSection");
-              }}
-              className={`w-full h-full ${
-                alertCameraData?.id == 3
-                  ? "border-4 border-red-600"
-                  : "border-2 border-[#334c8e]"
-              } bg-black duration-200 rounded-lg object-contain cursor-pointer hover:scale-105`}
-            />
-          </div>
-          <div className="flex-1 w-full h-[54vh] flex justify-center items-center bg-black rounded-lg">
-            {/* <Image
-                src={data[0].thermalImage}
+      <div
+          className={`flex-1 flex flex-wrap justify-start items-start p-5 gap-5 h-fit`}
+        >
+          {data.slice(0, 3).map((item, index) => (
+            <div key={index} className="relative min-w-[25vw] flex-1 h-fit">
+              <Image
+                src={
+                  CameraView === "Thermal"
+                    ? item.thermalImage
+                    : CameraView === "Normal"
+                    ? item.normalImage
+                    : CameraView === "Night"
+                    ? item.nightImage
+                    : null
+                }
                 alt="Camera Img"
-                className="w-full h-full rounded-lg object-contain cursor-pointer"
-              /> */}
+                onClick={() => {
+                  setCurrentCameraData(item);
+                  router.push("/components/DetailedVideoSection");
+                }}
+                className="relative w-full h-auto border-2 border-[#334c8e] bg-black duration-200 rounded-lg object-contain cursor-pointer hover:scale-105"
+              />
+              <div className="absolute z-30 top-2 left-2 bg-[#2b4075] text-white text-sm p-1 rounded">
+                Camera ID: {item.id}
+              </div>
+            </div>
+          ))}
+          <div className="h-auto flex-1 min-w-[20vw] flex justify-center items-center bg-black rounded-lg">
             <div
-              //   onClick={handleOpen}
+              onClick={() => setAlertCameraData(data[0])}
               className="text-center text-7xl cursor-pointer hover:scale-125 duration-200"
             >
               +
             </div>
           </div>
         </div>
-      </div>
     </div>
   );
 };

@@ -130,7 +130,7 @@ const page = () => {
         </div>
         <button
           onClick={downloadPDF}
-          className={`cursor-pointer bg-[#2b4075] border border-[#48599a] p-1 hover:scale-105 duration-200 mt-5`}
+          className={`cursor-pointer bg-[#2b4075] border border-[#48599a] py-1 px-3 hover:scale-105 duration-200 mt-5 rounded-lg`}
         >
           Download as PDF
         </button>
